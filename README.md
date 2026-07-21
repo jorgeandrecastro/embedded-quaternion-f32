@@ -16,7 +16,6 @@ microcontrôleur (OLED, TFT), sans allocation ni `libm`.
 [dependencies]
 embedded-quaternion-f32 = "0.1"
 ```
-
 ## 📖 Fonctions clés
 
 | Fonction | Description | Retour |
