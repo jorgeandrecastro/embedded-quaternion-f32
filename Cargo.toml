@@ -1,0 +1,29 @@
+[package]
+name = "embedded-quaternion-f32"
+version = "0.1.0"
+edition = "2024"
+authors = ["Jorge Andre Castro <georgeandrec@gmail.com>"]
+license = "GPL-2.0-or-later"
+description = "Quaternions f32 pour rotations 4D no_std embarqué (Hamilton product, projection 4D->3D->2D)"
+repository = "https://github.com/jorgeandrecastro/embedded-quaternion-f32"
+documentation = "https://docs.rs/embedded-quaternion-f32"
+readme = "README.md"
+keywords = ["quaternion", "math", "no-std", "embedded", "f32"]
+categories = ["mathematics", "no-std", "embedded"]
+autolib = false
+autobins = false
+autoexamples = false
+
+[lib]
+name = "embedded_quaternion_f32"
+path = "src/lib.rs"
+
+[dependencies]
+embedded-trig-f32 = "0.2"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
