@@ -14,7 +14,7 @@ microcontrôleur (OLED, TFT), sans allocation ni `libm`.
 
 ```toml
 [dependencies]
-embedded-quaternion-f32 = "0.1"
+embedded-quaternion-f32 = "0.2"
 ```
 ## 📖 Fonctions clés
 
@@ -30,6 +30,7 @@ embedded-quaternion-f32 = "0.1"
 | `project_2d(cx, cy, dist_4d, dist_3d)` | Projection perspective 4D → 3D → 2D | `(i16, i16, f32)` |
 | `+`, `-`, `*` (entre quaternions) | Addition, soustraction, produit de Hamilton | `Quaternion` |
 | `*` (par un `f32`) | Multiplication par un scalaire | `Quaternion` |
+| `normalize()` | Normalise le quaternion (le rend unitaire) | `Option<Quaternion>` |
 
 ## 💻 Exemples
 
@@ -40,7 +41,24 @@ use embedded_quaternion_f32::Quaternion;
 
 let q = Quaternion::new(1.0, 0.0, 0.0, 0.0);
 assert_eq!(q, Quaternion::ONE);
+
 ```
+### Normalisation d'un quaternion
+
+```rust
+use embedded_quaternion_f32::Quaternion;
+
+let q = Quaternion::new(1.0, 2.0, 3.0, 4.0);
+
+// Normalisation (rend le quaternion unitaire)
+if let Some(normalized) = q.normalize() {
+    assert!((normalized.norm_squared() - 1.0).abs() < 1e-4);
+}
+
+// Le quaternion nul ne peut pas être normalisé
+assert!(Quaternion::ZERO.normalize().is_none());
+```
+
 
 ### Rotation 4D (plan X-W) et projection à l'écran
 
@@ -93,8 +111,9 @@ let scaled = a * 2.0; // multiplication par un scalaire f32
 
 ## Dépendances
 
-Ce crate s'appuie sur [`embedded-trig-f32`](https://crates.io/crates/embedded-trig-f32)
-pour `sin`/`cos`/`sincos`. Ajustez la version dans `Cargo.toml` si vous
+Cette crate s'appuie sur [`embedded-trig-f32`](https://crates.io/crates/embedded-trig-f32)
+pour `sin`/`cos`/`sincos` et [`embedded-f32-sqrt`](https://crates.io/crates/embedded-f32-sqrt)
+pour la racine carrée optimisée.. Ajustez la version dans `Cargo.toml` si vous
 utilisez une dépendance locale (`path = ".."`) pendant le développement.
 
 > **Précision** : `embedded-trig-f32` fournit des approximations rapides

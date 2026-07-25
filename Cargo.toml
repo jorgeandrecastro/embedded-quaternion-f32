@@ -1,6 +1,6 @@
 [package]
 name = "embedded-quaternion-f32"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 authors = ["Jorge Andre Castro <georgeandrec@gmail.com>"]
 license = "GPL-2.0-or-later"
@@ -20,6 +20,7 @@ path = "src/lib.rs"
 
 [dependencies]
 embedded-trig-f32 = "0.2"
+embedded-f32-sqrt = "0.2"  
 
 [profile.release]
 opt-level = 3

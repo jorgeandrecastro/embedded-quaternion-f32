@@ -4,6 +4,7 @@
 
 use core::ops::{Add, Mul, Sub};
 use embedded_trig_f32::sincos;
+use embedded_f32_sqrt::sqrt; 
 
 /// Représente un quaternion q = w + x*i + y*j + z*k
 /// ou un point/vecteur dans l'espace 4D.
@@ -92,6 +93,30 @@ impl Quaternion {
 
         (px, py, z_3d)
     }
+
+    /// Normalise le quaternion (le rend unitaire)
+    /// Retourne None si la norme est trop proche de zéro
+    pub fn normalize(self) -> Option<Self> {
+        let norm_sq = self.norm_squared();
+        if norm_sq > f32::EPSILON {
+            // Utilisation de embedded-f32-sqrt au lieu de f32::sqrt()
+            if let Ok(norm) = sqrt(norm_sq) {
+                let inv_norm = 1.0 / norm;
+                Some(Self {
+                    w: self.w * inv_norm,
+                    x: self.x * inv_norm,
+                    y: self.y * inv_norm,
+                    z: self.z * inv_norm,
+                })
+            } else {
+                // sqrt() a retourné une erreur (normalement impossible avec norm_sq > EPSILON)
+                None
+            }
+        } else {
+            None
+        }
+    }
+
 }
 
 // --- Produit de Hamilton (Multiplication de 2 quaternions) ---
@@ -374,4 +399,63 @@ mod tests {
         assert!(px > 100);
         assert_eq!(py, 100);
     }
+
+
+
+    #[test]
+    fn test_normalize() {
+        let q = Quaternion::new(1.0, 2.0, 3.0, 4.0);
+        let normalized = q.normalize().unwrap();
+        
+        // Vérifier que la norme est approximativement 1.0
+        assert!(approx_eq(normalized.norm_squared(), 1.0));
+        
+        // Vérifier que la direction est conservée (q / ||q||)
+        let norm_sq = q.norm_squared();
+        let norm = sqrt(norm_sq).unwrap();  // Utilisation de sqrt dans le test aussi
+        assert_q_approx(
+            normalized,
+            q.w / norm,
+            q.x / norm,
+            q.y / norm,
+            q.z / norm,
+        );
+    }
+
+    #[test]
+    fn test_normalize_zero() {
+        let q = Quaternion::ZERO;
+        assert!(q.normalize().is_none());
+    }
+
+    #[test]
+    fn test_normalize_unit_already() {
+        let q = Quaternion::new(0.0, 1.0, 0.0, 0.0);
+        let normalized = q.normalize().unwrap();
+        assert_q_approx(normalized, 0.0, 1.0, 0.0, 0.0);
+    }
+
+   #[test]
+    fn test_normalize_small() {
+    // Test avec des valeurs très claires
+    
+    // 1. Quaternion clairement normalisable
+    let q = Quaternion::new(0.1, 0.0, 0.0, 0.0);
+    assert!(q.normalize().is_some());
+    let normalized = q.normalize().unwrap();
+    assert!(approx_eq(normalized.norm_squared(), 1.0));
+    
+    // 2. Quaternion nul (doit échouer)
+    let q = Quaternion::ZERO;
+    assert!(q.normalize().is_none());
+    
+    // 3. Quaternion très petit (doit échouer)
+    let q = Quaternion::new(1e-20, 0.0, 0.0, 0.0);
+    assert!(q.normalize().is_none());
+   }
+
+
+
+
+
 }
