@@ -14,7 +14,7 @@ microcontrollers (OLED, TFT), without allocation or `libm`.
 
 ```toml
 [dependencies]
-embedded-quaternion-f32 = "0.3"
+embedded-quaternion-f32 = "0.4"
 ```
 ## 📖 Key functions
 

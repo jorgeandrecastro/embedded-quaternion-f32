@@ -1,9 +1,9 @@
 [package]
 name = "embedded-quaternion-f32"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2024"
 authors = ["Jorge Andre Castro <georgeandrec@gmail.com>"]
-license = "GPL-2.0-or-later"
+license = "MIT OR Apache-2.0"
 description = "f32 quaternions for embedded no_std 4D rotations (Hamilton product, 4D->3D->2D projection)"
 repository = "https://github.com/jorgeandrecastro/embedded-quaternion-f32"
 documentation = "https://docs.rs/embedded-quaternion-f32"
